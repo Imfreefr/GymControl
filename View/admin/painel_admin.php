@@ -11,9 +11,7 @@
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
 if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Model\Aluno;
@@ -21,9 +19,7 @@ use Model\Connection;
 use Model\Exercicio;
 use Model\Treino;
 
-// ============================================================
 // Dados
-// ============================================================
 $alunoM = new Aluno();
 $exM = new Exercicio();
 $trM = new Treino();

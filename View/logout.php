@@ -9,14 +9,10 @@ if (session_status()===PHP_SESSION_NONE) session_start();
  * a sessão no servidor e redireciona para a página inicial.
  */
 
-// ============================================================
 // Autenticação
-// ============================================================
 require_once '../vendor/autoload.php';
 
-// ============================================================
 // Processamento - Encerramento de Sessão
-// ============================================================
 
 // Limpa todos os dados da sessão atual.
 $_SESSION = [];

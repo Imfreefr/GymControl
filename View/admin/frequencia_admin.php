@@ -13,22 +13,16 @@ if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['c
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
 if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\AlunoController;
 use Model\Frequencia;
 
-// ============================================================
 // Dados
-// ============================================================
 $alunos = (new AlunoController())->listar();
 
-// ============================================================
 // Processamento (POST)
-// ============================================================
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

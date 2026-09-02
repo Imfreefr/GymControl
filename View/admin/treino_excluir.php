@@ -12,18 +12,14 @@ if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['c
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
 if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_GET['csrf'] ?? null)))) {
     die('Token inválido.');
 }
 
-// ============================================================
 // Processamento
-// ============================================================
 use Controller\TreinoController;
 
 (new TreinoController())->excluir((int) ($_GET['id'] ?? 0));

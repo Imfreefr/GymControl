@@ -1,18 +1,11 @@
--- =========================================================
 -- BANCO DE DADOS
--- =========================================================
-
 CREATE DATABASE IF NOT EXISTS academia
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE academia;
 
-
--- =========================================================
 -- TABELA: USERS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS users (
     id         INT PRIMARY KEY AUTO_INCREMENT,
     nome       VARCHAR(255) NOT NULL,
@@ -25,11 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
         CHECK (tipo IN ('admin', 'aluno'))
 );
 
-
--- =========================================================
 -- TABELA: ALUNOS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS alunos (
     id              INT PRIMARY KEY AUTO_INCREMENT,
     user_id         INT NOT NULL UNIQUE,
@@ -46,11 +35,7 @@ CREATE TABLE IF NOT EXISTS alunos (
         ON DELETE CASCADE
 );
 
-
--- =========================================================
 -- TABELA: EXERCICIOS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS exercicios (
     id             INT PRIMARY KEY AUTO_INCREMENT,
     nome           VARCHAR(255) NOT NULL,
@@ -63,11 +48,7 @@ CREATE TABLE IF NOT EXISTS exercicios (
     created_at     DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- =========================================================
 -- TABELA: TREINOS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS treinos (
     id          INT PRIMARY KEY AUTO_INCREMENT,
     aluno_id    INT NOT NULL,
@@ -83,11 +64,7 @@ CREATE TABLE IF NOT EXISTS treinos (
         ON DELETE CASCADE
 );
 
-
--- =========================================================
 -- TABELA: TREINO_EXERCICIOS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS treino_exercicios (
     id           INT PRIMARY KEY AUTO_INCREMENT,
     treino_id    INT NOT NULL,
@@ -108,11 +85,7 @@ CREATE TABLE IF NOT EXISTS treino_exercicios (
         ON DELETE CASCADE
 );
 
-
--- =========================================================
 -- TABELA: FREQUENCIAS
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS frequencias (
     id       INT PRIMARY KEY AUTO_INCREMENT,
     aluno_id INT NOT NULL,
@@ -128,11 +101,7 @@ CREATE TABLE IF NOT EXISTS frequencias (
         UNIQUE (aluno_id, data)
 );
 
-
--- =========================================================
 -- TABELA: EVOLUCOES
--- =========================================================
-
 CREATE TABLE IF NOT EXISTS evolucoes (
     id         INT PRIMARY KEY AUTO_INCREMENT,
     aluno_id   INT NOT NULL,
@@ -146,3 +115,11 @@ CREATE TABLE IF NOT EXISTS evolucoes (
         REFERENCES alunos(id)
         ON DELETE CASCADE
 );
+
+-- SEED: usuarios padrao (senha: Admin123! / Aluno123!)
+INSERT IGNORE INTO users (id, nome, email, senha, tipo) VALUES
+(1, 'Admin GymControl', 'admin@gymcontrol.com', '$argon2id$v=19$m=131072,t=4,p=2$Mm1xaC5lS1dSU1l1L0pvaw$E1qbb6WBaHYxMkIf7WjbSoKxpzAu1+Hf5nVVlDNVkz4', 'admin'),
+(2, 'Aluno Teste', 'aluno@teste.com', '$argon2id$v=19$m=131072,t=4,p=2$ZGxhZE9RamZ2QlR5S1RPbw$NoCH/Y/4AzfcffCLIN1qZMwvpyUPK0Ni4r9f6NyPG7E', 'aluno');
+
+INSERT IGNORE INTO alunos (id, user_id, telefone, data_nascimento, objetivo, status, professor) VALUES
+(1, 2, '(11) 99999-0000', '2000-05-15', 'Hipertrofia', 'ativo', 'Prof. Carlos');

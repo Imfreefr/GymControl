@@ -14,9 +14,7 @@ use Model\Evolucao;
 use Model\Frequencia;
 use Model\Treino;
 
-// ---------------------------------------------------------------------
 // Autenticação e autorização
-// ---------------------------------------------------------------------
 if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
@@ -24,9 +22,7 @@ if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     exit;
 }
 
-// ---------------------------------------------------------------------
 // Dados do aluno logado
-// ---------------------------------------------------------------------
 $alunoCtrl = new AlunoController();
 $aluno = $alunoCtrl->porUsuario((int) $_SESSION['usuario_id']);
 

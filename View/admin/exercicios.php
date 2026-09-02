@@ -12,16 +12,12 @@ if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['c
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
 if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\ExercicioController;
 
-// ============================================================
 // Dados
-// ============================================================
 $ctrl = new ExercicioController();
 
 $busca = trim($_GET['busca'] ?? '');
