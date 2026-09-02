@@ -18,7 +18,7 @@ use Model\Frequencia;
 // ============================================================
 // Autenticação e Autorização
 // ============================================================
-exigirLogin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     header('Location: admin/painel_admin.php');
@@ -93,8 +93,8 @@ $mes = $freq->doMes((int) $aluno['id'], date('Y-m'));
                 <div class="col-12 col-md-4">
                     <div class="stat-card p-3 text-center">
                         <small class="text-muted">Status</small>
-                        <h5><span class="badge bg-success"><?= e($aluno['status']) ?></span></h5>
-                        <small class="text-muted"><?= e($aluno['objetivo'] ?? '—') ?></small>
+                        <h5><span class="badge bg-success"><?= htmlspecialchars((string) $aluno['status'], ENT_QUOTES, 'UTF-8') ?></span></h5>
+                        <small class="text-muted"><?= htmlspecialchars((string) ($aluno['objetivo'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></small>
                     </div>
                 </div>
             </div>
@@ -121,7 +121,7 @@ $mes = $freq->doMes((int) $aluno['id'], date('Y-m'));
                                 <?php else : ?>
                                     <?php foreach ($historico as $f) : ?>
                                         <tr>
-                                            <td><?= e($f['data']) ?></td>
+                                            <td><?= htmlspecialchars((string) $f['data'], ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><span class="badge bg-success">Presente</span></td>
                                         </tr>
                                     <?php endforeach; ?>

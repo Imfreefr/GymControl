@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Novo Exercício (Admin)
@@ -12,20 +13,16 @@
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\ExercicioController;
 
-// ============================================================
 // Processamento (POST)
-// ============================================================
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $ctrl = new ExercicioController();
@@ -63,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="small text-muted">POST → Controller → Validação → Model → PDO → MySQL/SQLite → Redirect</p>
 
                 <?php if ($msg) : ?>
-                    <div class="alert alert-warning py-2 small"><?= e($msg) ?></div>
+                    <div class="alert alert-warning py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" class="card card-gym border-0 p-4">
@@ -107,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="text" name="descanso" class="form-control" value="60s">
                         </div>
                     </div>
-                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
                     <div class="d-flex gap-2 mt-3">
                         <button class="btn btn-gym">Salvar</button>
                         <a href="exercicios.php" class="btn btn-outline-dark">Voltar</a>

@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Novo Treino (Admin)
@@ -15,7 +16,7 @@ require_once '../../vendor/autoload.php';
 // ============================================================
 // Autenticação
 // ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\AlunoController;
 use Controller\TreinoController;
@@ -32,7 +33,7 @@ $exs = (new Exercicio())->listar();
 // Processamento (POST)
 // ============================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $ctrl = new TreinoController();
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="small text-muted">Aluno → Criar Treino → Selecionar Exercícios → Salvar → Aluno visualiza</p>
 
                 <?php if ($msg) : ?>
-                    <div class="alert alert-warning py-2 small"><?= e($msg) ?></div>
+                    <div class="alert alert-warning py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" class="card card-gym border-0 p-4">
@@ -88,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <select name="aluno_id" class="form-select" required>
                                 <option value="">Selecione</option>
                                 <?php foreach ($alunos as $a) : ?>
-                                    <option value="<?= (int) $a['id'] ?>"><?= e($a['nome']) ?> (<?= e($a['email']) ?>)</option>
+                                    <option value="<?= (int) $a['id'] ?>"><?= htmlspecialchars((string) $a['nome'], ENT_QUOTES, 'UTF-8') ?> (<?= htmlspecialchars((string) $a['email'], ENT_QUOTES, 'UTF-8') ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -117,16 +118,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <?php foreach ($exs as $ex) : ?>
                                         <label class="d-flex align-items-center gap-2 small mb-1">
                                             <input type="checkbox" name="exercicios[]" value="<?= (int) $ex['id'] ?>">
-                                            <?= e($ex['nome']) ?>
-                                            <span class="badge bg-secondary"><?= e($ex['grupo_muscular']) ?></span>
-                                            <?= e($ex['series']) ?>×<?= e($ex['repeticoes']) ?>
+                                            <?= htmlspecialchars((string) $ex['nome'], ENT_QUOTES, 'UTF-8') ?>
+                                            <span class="badge bg-secondary"><?= htmlspecialchars((string) $ex['grupo_muscular'], ENT_QUOTES, 'UTF-8') ?></span>
+                                            <?= htmlspecialchars((string) $ex['series'], ENT_QUOTES, 'UTF-8') ?>×<?= htmlspecialchars((string) $ex['repeticoes'], ENT_QUOTES, 'UTF-8') ?>
                                         </label>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
                     <div class="d-flex gap-2 mt-3">
                         <button class="btn btn-gym">Salvar</button>
                         <a href="treinos.php" class="btn btn-outline-dark">Voltar</a>

@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Registrar Frequência (Admin)
@@ -15,7 +16,7 @@ require_once '../../vendor/autoload.php';
 // ============================================================
 // Autenticação
 // ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\AlunoController;
 use Model\Frequencia;
@@ -31,7 +32,7 @@ $alunos = (new AlunoController())->listar();
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $freq = new Frequencia();
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3 class="fw-bold">Registrar Frequência</h3>
 
                 <?php if ($msg) : ?>
-                    <div class="alert alert-info py-2 small"><?= e($msg) ?></div>
+                    <div class="alert alert-info py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" class="card card-gym border-0 p-4">
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <select name="aluno_id" class="form-select" required>
                             <option value="">Selecione</option>
                             <?php foreach ($alunos as $a) : ?>
-                                <option value="<?= (int) $a['id'] ?>"><?= e($a['nome']) ?></option>
+                                <option value="<?= (int) $a['id'] ?>"><?= htmlspecialchars((string) $a['nome'], ENT_QUOTES, 'UTF-8') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label">Data</label>
                         <input type="date" name="data" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
-                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
                     <button class="btn btn-gym">Registrar presença</button>
                     <a href="painel_admin.php" class="btn btn-outline-dark">Voltar</a>
                 </form>

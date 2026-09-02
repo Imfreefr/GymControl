@@ -17,7 +17,7 @@ use Model\Treino;
 // ---------------------------------------------------------------------
 // Autenticação e autorização
 // ---------------------------------------------------------------------
-exigirLogin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     header('Location: admin/painel_admin.php');
@@ -72,7 +72,7 @@ $proximoTreino = $meusTreinos[0] ?? null;
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                <span class="small opacity-75"><?= e($_SESSION['usuario_nome']) ?></span>
+                <span class="small opacity-75"><?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?></span>
                 <a href="meu_treino.php" class="btn btn-sm btn-outline-light">Meu Treino</a>
                 <a href="frequencia.php" class="btn btn-sm btn-outline-light">Frequência</a>
                 <a href="evolucao.php" class="btn btn-sm btn-outline-light">Evolução</a>
@@ -83,7 +83,7 @@ $proximoTreino = $meusTreinos[0] ?? null;
 
     <main class="container py-4">
 
-        <h2 class="fw-bold">Olá, <?= e($_SESSION['usuario_nome']) ?>! 👋</h2>
+        <h2 class="fw-bold">Olá, <?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?>! 👋</h2>
         <p class="text-muted">Bem-vindo ao seu painel. Acompanhe seu treino e evolução.</p>
 
         <!-- Cards de resumo -->
@@ -116,9 +116,9 @@ $proximoTreino = $meusTreinos[0] ?? null;
                 <div class="stat-card p-3">
                     <small class="text-muted">Status</small>
                     <h4 class="fw-bold mb-1">
-                        <span class="badge bg-success"><?= e($aluno['status'] ?? 'ativo') ?></span>
+                        <span class="badge bg-success"><?= htmlspecialchars((string) ($aluno['status'] ?? 'ativo'), ENT_QUOTES, 'UTF-8') ?></span>
                     </h4>
-                    <span class="small text-muted"><?= e($aluno['objetivo'] ?? '—') ?></span>
+                    <span class="small text-muted"><?= htmlspecialchars((string) ($aluno['objetivo'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
         </div>
@@ -135,12 +135,12 @@ $proximoTreino = $meusTreinos[0] ?? null;
                         </h5>
                         <div class="row small">
                             <div class="col-6">
-                                <p class="mb-1"><strong>E-mail:</strong> <?= e($_SESSION['usuario_email']) ?></p>
-                                <p class="mb-1"><strong>Telefone:</strong> <?= e($aluno['telefone'] ?? '—') ?></p>
+                                <p class="mb-1"><strong>E-mail:</strong> <?= htmlspecialchars((string) $_SESSION['usuario_email'], ENT_QUOTES, 'UTF-8') ?></p>
+                                <p class="mb-1"><strong>Telefone:</strong> <?= htmlspecialchars((string) ($aluno['telefone'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></p>
                             </div>
                             <div class="col-6">
-                                <p class="mb-1"><strong>Objetivo:</strong> <?= e($aluno['objetivo'] ?? '—') ?></p>
-                                <p class="mb-1"><strong>Professor:</strong> <?= e($aluno['professor'] ?? '—') ?></p>
+                                <p class="mb-1"><strong>Objetivo:</strong> <?= htmlspecialchars((string) ($aluno['objetivo'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></p>
+                                <p class="mb-1"><strong>Professor:</strong> <?= htmlspecialchars((string) ($aluno['professor'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></p>
                             </div>
                         </div>
                     </div>
@@ -152,11 +152,11 @@ $proximoTreino = $meusTreinos[0] ?? null;
                         <div class="card-body">
                             <h5 class="fw-bold">Próximo Treino</h5>
                             <p class="mb-1 fw-semibold">
-                                <?= e($proximoTreino['nome']) ?>
-                                <small class="text-muted">— <?= e($proximoTreino['objetivo'] ?? '') ?></small>
+                                <?= htmlspecialchars((string) $proximoTreino['nome'], ENT_QUOTES, 'UTF-8') ?>
+                                <small class="text-muted">— <?= htmlspecialchars((string) ($proximoTreino['objetivo'] ?? ''), ENT_QUOTES, 'UTF-8') ?></small>
                             </p>
                             <p class="small text-muted mb-0">
-                                Criado em <?= e($proximoTreino['created_at']) ?>
+                                Criado em <?= htmlspecialchars((string) $proximoTreino['created_at'], ENT_QUOTES, 'UTF-8') ?>
                             </p>
                             <a href="meu_treino.php" class="btn btn-sm btn-gym mt-2">Ver detalhes</a>
                         </div>
@@ -188,10 +188,10 @@ $proximoTreino = $meusTreinos[0] ?? null;
                                 <i class="bi bi-graph-up"></i> Última evolução
                             </h5>
                             <p class="mb-1">
-                                <strong><?= e($ultima['peso']) ?> kg</strong> • <?= e($ultima['altura']) ?> m
+                                <strong><?= htmlspecialchars((string) $ultima['peso'], ENT_QUOTES, 'UTF-8') ?> kg</strong> • <?= htmlspecialchars((string) $ultima['altura'], ENT_QUOTES, 'UTF-8') ?> m
                             </p>
                             <p class="small text-muted mb-0">
-                                <?= e($ultima['observacao'] ?? '') ?> — <?= e($ultima['data']) ?>
+                                <?= htmlspecialchars((string) ($ultima['observacao'] ?? ''), ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $ultima['data'], ENT_QUOTES, 'UTF-8') ?>
                             </p>
                             <canvas id="grafPeso" height="120" class="mt-2"></canvas>
                         </div>

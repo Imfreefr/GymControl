@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Cadastro de Usuário
@@ -14,7 +15,7 @@ $controller = new UsuarioController();
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $nome  = filter_var($_POST['nome'] ?? '', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
 
             <button type="submit" class="border-0 text-white rounded-3 w-100 mb-3 p-2 bgLinearGradient">
                 Cadastrar

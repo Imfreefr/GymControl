@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Tela de Login
@@ -23,7 +24,7 @@ if (isset($_GET['msg']) && $_GET['msg'] === 'logout') {
 
 // Processa login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $loginMessage = 'Token inválido.';
     } else {
         $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
 
             <button type="submit" class="bgLinearGradient rounded-3 w-100 mb-3">
                 Entrar

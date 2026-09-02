@@ -14,7 +14,7 @@ require_once '../../vendor/autoload.php';
 // ============================================================
 // Autenticação
 // ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Model\Aluno;
 use Model\Connection;
@@ -85,8 +85,8 @@ $presRecentes = $pdo->query(
                     </a>
                 </nav>
                 <div class="mt-4 small opacity-75">
-                    <?= e($_SESSION['usuario_nome']) ?><br>
-                    <?= e($_SESSION['usuario_email']) ?>
+                    <?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?><br>
+                    <?= htmlspecialchars((string) $_SESSION['usuario_email'], ENT_QUOTES, 'UTF-8') ?>
                 </div>
             </aside>
 
@@ -144,8 +144,8 @@ $presRecentes = $pdo->query(
                                     <ul class="list-unstyled small mb-0">
                                         <?php foreach ($presRecentes as $p) : ?>
                                             <li class="d-flex justify-content-between border-bottom py-1">
-                                                <span><?= e($p['nome']) ?></span>
-                                                <span class="text-muted"><?= e($p['data']) ?></span>
+                                                <span><?= htmlspecialchars((string) $p['nome'], ENT_QUOTES, 'UTF-8') ?></span>
+                                                <span class="text-muted"><?= htmlspecialchars((string) $p['data'], ENT_QUOTES, 'UTF-8') ?></span>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>

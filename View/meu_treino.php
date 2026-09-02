@@ -12,7 +12,7 @@ require_once '../vendor/autoload.php';
 use Controller\AlunoController;
 use Controller\TreinoController;
 
-exigirLogin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
 
 $alunoCtrl  = new AlunoController();
 $treinoCtrl = new TreinoController();
@@ -81,14 +81,14 @@ $meusTreinos = $treinoCtrl->doAluno((int) $aluno['id']);
                         <!-- Cabeçalho do treino -->
                         <div class="d-flex justify-content-between flex-wrap gap-2">
                             <div>
-                                <h5 class="fw-bold mb-1"><?= e($treino['nome']) ?></h5>
+                                <h5 class="fw-bold mb-1"><?= htmlspecialchars((string) $treino['nome'], ENT_QUOTES, 'UTF-8') ?></h5>
                                 <p class="small text-muted mb-1">
-                                    <i class="bi bi-bullseye"></i> Objetivo: <?= e($treino['objetivo'] ?? '—') ?>
-                                    • <i class="bi bi-person"></i> Prof: <?= e($treino['professor'] ?? '—') ?>
-                                    • <?= e($treino['created_at']) ?>
+                                    <i class="bi bi-bullseye"></i> Objetivo: <?= htmlspecialchars((string) ($treino['objetivo'] ?? '—'), ENT_QUOTES, 'UTF-8') ?>
+                                    • <i class="bi bi-person"></i> Prof: <?= htmlspecialchars((string) ($treino['professor'] ?? '—'), ENT_QUOTES, 'UTF-8') ?>
+                                    • <?= htmlspecialchars((string) $treino['created_at'], ENT_QUOTES, 'UTF-8') ?>
                                 </p>
                                 <?php if (!empty($treino['observacoes'])): ?>
-                                    <p class="small mb-2"><em><?= e($treino['observacoes']) ?></em></p>
+                                    <p class="small mb-2"><em><?= htmlspecialchars((string) $treino['observacoes'], ENT_QUOTES, 'UTF-8') ?></em></p>
                                 <?php endif; ?>
                             </div>
                             <span class="badge bg-dark align-self-start">
@@ -115,12 +115,12 @@ $meusTreinos = $treinoCtrl->doAluno((int) $aluno['id']);
                                     <tbody>
                                         <?php foreach ($exercicios as $ex): ?>
                                             <tr>
-                                                <td class="fw-semibold"><?= e($ex['nome']) ?></td>
-                                                <td><span class="badge bg-secondary"><?= e($ex['grupo_muscular']) ?></span></td>
-                                                <td><?= e($ex['series']) ?>×</td>
-                                                <td><?= e($ex['repeticoes']) ?></td>
-                                                <td><?= e($ex['carga']) ?></td>
-                                                <td><?= e($ex['descanso']) ?></td>
+                                                <td class="fw-semibold"><?= htmlspecialchars((string) $ex['nome'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><span class="badge bg-secondary"><?= htmlspecialchars((string) $ex['grupo_muscular'], ENT_QUOTES, 'UTF-8') ?></span></td>
+                                                <td><?= htmlspecialchars((string) $ex['series'], ENT_QUOTES, 'UTF-8') ?>×</td>
+                                                <td><?= htmlspecialchars((string) $ex['repeticoes'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) $ex['carga'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) $ex['descanso'], ENT_QUOTES, 'UTF-8') ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>

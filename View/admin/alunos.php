@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Listagem de Alunos (Admin)
@@ -11,16 +12,12 @@
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\AlunoController;
 
-// ============================================================
 // Dados
-// ============================================================
 $ctrl = new AlunoController();
 
 $busca = trim($_GET['busca'] ?? '');
@@ -78,13 +75,13 @@ $msg = $_GET['msg'] ?? '';
                 </div>
 
                 <?php if ($msg) : ?>
-                    <div class="alert alert-success py-2 small"><?= e($msg) ?></div>
+                    <div class="alert alert-success py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <!-- Busca -->
                 <form method="GET" class="mb-3">
                     <div class="input-group" style="max-width: 360px;">
-                        <input type="text" name="busca" value="<?= e($busca) ?>" class="form-control" placeholder="Buscar por nome ou e-mail">
+                        <input type="text" name="busca" value="<?= htmlspecialchars((string) $busca, ENT_QUOTES, 'UTF-8') ?>" class="form-control" placeholder="Buscar por nome ou e-mail">
                         <button class="btn btn-dark">Buscar</button>
                     </div>
                 </form>
@@ -112,18 +109,18 @@ $msg = $_GET['msg'] ?? '';
                                     <?php else : ?>
                                         <?php foreach ($alunos as $a) : ?>
                                             <tr>
-                                                <td class="fw-semibold"><?= e($a['nome']) ?></td>
-                                                <td class="small"><?= e($a['email']) ?></td>
-                                                <td class="small"><?= e($a['telefone'] ?? '—') ?></td>
-                                                <td><span class="badge bg-secondary"><?= e($a['objetivo'] ?? '—') ?></span></td>
+                                                <td class="fw-semibold"><?= htmlspecialchars((string) $a['nome'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td class="small"><?= htmlspecialchars((string) $a['email'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td class="small"><?= htmlspecialchars((string) ($a['telefone'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><span class="badge bg-secondary"><?= htmlspecialchars((string) ($a['objetivo'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></span></td>
                                                 <td>
                                                     <span class="badge <?= $a['status'] === 'ativo' ? 'bg-success' : 'bg-secondary' ?>">
-                                                        <?= e($a['status']) ?>
+                                                        <?= htmlspecialchars((string) $a['status'], ENT_QUOTES, 'UTF-8') ?>
                                                     </span>
                                                 </td>
                                                 <td class="d-flex gap-1">
                                                     <a href="aluno_editar.php?id=<?= (int) $a['id'] ?>" class="btn btn-sm btn-outline-dark">Editar</a>
-                                                    <a href="aluno_excluir.php?id=<?= (int) $a['id'] ?>&csrf=<?= e(csrf_token()) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir aluno?')">Excluir</a>
+                                                    <a href="aluno_excluir.php?id=<?= (int) $a['id'] ?>&csrf=<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir aluno?')">Excluir</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

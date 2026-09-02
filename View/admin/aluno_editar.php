@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Editar Aluno (Admin)
@@ -13,16 +14,12 @@
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
 // Autenticação
-// ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\AlunoController;
 
-// ============================================================
 // Dados
-// ============================================================
 $ctrl = new AlunoController();
 
 $id = (int) ($_GET['id'] ?? 0);
@@ -32,13 +29,11 @@ if (!$aluno) {
     die('Aluno não encontrado.');
 }
 
-// ============================================================
 // Processamento (POST)
-// ============================================================
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $dados = [
@@ -83,30 +78,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3 class="fw-bold">Editar Aluno</h3>
 
                 <?php if ($msg) : ?>
-                    <div class="alert alert-info py-2 small"><?= e($msg) ?></div>
+                    <div class="alert alert-info py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" class="card card-gym border-0 p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nome</label>
-                            <input type="text" name="nome" class="form-control" value="<?= e($aluno['nome']) ?>" required>
+                            <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars((string) $aluno['nome'], ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">E-mail</label>
-                            <input type="email" name="email" class="form-control" value="<?= e($aluno['email']) ?>" required>
+                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars((string) $aluno['email'], ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Telefone</label>
-                            <input type="text" name="telefone" class="form-control" value="<?= e($aluno['telefone'] ?? '') ?>">
+                            <input type="text" name="telefone" class="form-control" value="<?= htmlspecialchars((string) ($aluno['telefone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Nascimento</label>
-                            <input type="date" name="data_nascimento" class="form-control" value="<?= e($aluno['data_nascimento'] ?? '') ?>">
+                            <input type="date" name="data_nascimento" class="form-control" value="<?= htmlspecialchars((string) ($aluno['data_nascimento'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Objetivo</label>
-                            <input type="text" name="objetivo" class="form-control" value="<?= e($aluno['objetivo'] ?? '') ?>">
+                            <input type="text" name="objetivo" class="form-control" value="<?= htmlspecialchars((string) ($aluno['objetivo'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Status</label>
@@ -117,10 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Professor</label>
-                            <input type="text" name="professor" class="form-control" value="<?= e($aluno['professor'] ?? '') ?>">
+                            <input type="text" name="professor" class="form-control" value="<?= htmlspecialchars((string) ($aluno['professor'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                         </div>
                     </div>
-                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
                     <div class="d-flex gap-2 mt-3">
                         <button class="btn btn-gym">Salvar</button>
                         <a href="alunos.php" class="btn btn-outline-dark">Voltar</a>

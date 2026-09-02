@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Listagem de Treinos (Admin)
@@ -11,16 +12,13 @@
 
 require_once '../../vendor/autoload.php';
 
-// ============================================================
+
 // Autenticação
-// ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\TreinoController;
 
-// ============================================================
 // Dados
-// ============================================================
 $ctrl = new TreinoController();
 $lista = $ctrl->todos();
 
@@ -74,19 +72,19 @@ $lista = $ctrl->todos();
                             <div class="col-md-6">
                                 <div class="card card-gym border-0 h-100">
                                     <div class="card-body">
-                                        <h5 class="fw-bold mb-1"><?= e($t['nome']) ?></h5>
+                                        <h5 class="fw-bold mb-1"><?= htmlspecialchars((string) $t['nome'], ENT_QUOTES, 'UTF-8') ?></h5>
                                         <p class="small text-muted mb-1">
-                                            <i class="bi bi-person"></i> <?= e($t['aluno_nome']) ?> • <?= e($t['objetivo'] ?? '') ?> • <?= e($t['created_at']) ?>
+                                            <i class="bi bi-person"></i> <?= htmlspecialchars((string) $t['aluno_nome'], ENT_QUOTES, 'UTF-8') ?> • <?= htmlspecialchars((string) ($t['objetivo'] ?? ''), ENT_QUOTES, 'UTF-8') ?> • <?= htmlspecialchars((string) $t['created_at'], ENT_QUOTES, 'UTF-8') ?>
                                         </p>
                                         <?php if (!empty($t['observacoes'])) : ?>
-                                            <p class="small"><em><?= e($t['observacoes']) ?></em></p>
+                                            <p class="small"><em><?= htmlspecialchars((string) $t['observacoes'], ENT_QUOTES, 'UTF-8') ?></em></p>
                                         <?php endif; ?>
                                         <ul class="small mb-2">
                                             <?php foreach ($exs as $ex) : ?>
-                                                <li><?= e($ex['nome']) ?> — <?= e($ex['series']) ?>×<?= e($ex['repeticoes']) ?> (<?= e($ex['carga']) ?>)</li>
+                                                <li><?= htmlspecialchars((string) $ex['nome'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $ex['series'], ENT_QUOTES, 'UTF-8') ?>×<?= htmlspecialchars((string) $ex['repeticoes'], ENT_QUOTES, 'UTF-8') ?> (<?= htmlspecialchars((string) $ex['carga'], ENT_QUOTES, 'UTF-8') ?>)</li>
                                             <?php endforeach; ?>
                                         </ul>
-                                        <a href="treino_excluir.php?id=<?= (int) $t['id'] ?>&csrf=<?= e(csrf_token()) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir treino?')">Excluir</a>
+                                        <a href="treino_excluir.php?id=<?= (int) $t['id'] ?>&csrf=<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir treino?')">Excluir</a>
                                     </div>
                                 </div>
                             </div>

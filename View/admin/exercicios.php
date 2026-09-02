@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Listagem de Exercícios (Admin)
@@ -14,7 +15,7 @@ require_once '../../vendor/autoload.php';
 // ============================================================
 // Autenticação
 // ============================================================
-exigirAdmin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
 
 use Controller\ExercicioController;
 
@@ -79,7 +80,7 @@ $lista = $ctrl->listar($busca ?: null);
                 <!-- Busca -->
                 <form method="GET" class="mb-3">
                     <div class="input-group" style="max-width: 360px;">
-                        <input type="text" name="busca" value="<?= e($busca) ?>" class="form-control" placeholder="Buscar por nome (GET)">
+                        <input type="text" name="busca" value="<?= htmlspecialchars((string) $busca, ENT_QUOTES, 'UTF-8') ?>" class="form-control" placeholder="Buscar por nome (GET)">
                         <button class="btn btn-dark">Buscar</button>
                     </div>
                 </form>
@@ -108,14 +109,14 @@ $lista = $ctrl->listar($busca ?: null);
                                     <?php else : ?>
                                         <?php foreach ($lista as $ex) : ?>
                                             <tr>
-                                                <td class="fw-semibold"><?= e($ex['nome']) ?></td>
-                                                <td><span class="badge bg-secondary"><?= e($ex['grupo_muscular']) ?></span></td>
-                                                <td><?= e($ex['series']) ?>×</td>
-                                                <td><?= e($ex['repeticoes']) ?></td>
-                                                <td><?= e($ex['carga']) ?></td>
-                                                <td><?= e($ex['descanso']) ?></td>
+                                                <td class="fw-semibold"><?= htmlspecialchars((string) $ex['nome'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><span class="badge bg-secondary"><?= htmlspecialchars((string) $ex['grupo_muscular'], ENT_QUOTES, 'UTF-8') ?></span></td>
+                                                <td><?= htmlspecialchars((string) $ex['series'], ENT_QUOTES, 'UTF-8') ?>×</td>
+                                                <td><?= htmlspecialchars((string) $ex['repeticoes'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) $ex['carga'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                <td><?= htmlspecialchars((string) $ex['descanso'], ENT_QUOTES, 'UTF-8') ?></td>
                                                 <td>
-                                                    <a href="exercicio_excluir.php?id=<?= (int) $ex['id'] ?>&csrf=<?= e(csrf_token()) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir?')">Excluir</a>
+                                                    <a href="exercicio_excluir.php?id=<?= (int) $ex['id'] ?>&csrf=<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir?')">Excluir</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

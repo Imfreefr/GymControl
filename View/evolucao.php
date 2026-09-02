@@ -1,4 +1,5 @@
 <?php
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
  * GymControl - Minha Evolução (Aluno)
@@ -15,19 +16,15 @@ require_once '../vendor/autoload.php';
 use Controller\AlunoController;
 use Model\Evolucao;
 
-// ============================================================
 // Autenticação e Autorização
-// ============================================================
-exigirLogin();
+if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     header('Location: admin/painel_admin.php');
     exit;
 }
 
-// ============================================================
 // Dados
-// ============================================================
 $alunoCtrl = new AlunoController();
 $evo = new Evolucao();
 
@@ -37,13 +34,11 @@ if (!$aluno) {
     die('Aluno não encontrado.');
 }
 
-// ============================================================
 // Processamento (POST)
-// ============================================================
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validar($_POST['csrf'] ?? null)) {
+    if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? null)))) {
         $msg = 'Token inválido.';
     } else {
         $peso = $_POST['peso'] !== '' ? (float) $_POST['peso'] : null;
@@ -60,9 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ============================================================
 // Consulta
-// ============================================================
 $historico = $evo->doAluno((int) $aluno['id']);
 
 ?>
@@ -100,7 +93,7 @@ $historico = $evo->doAluno((int) $aluno['id']);
             <p class="text-muted small">Registre peso/altura. POST → Controller → Model → PDO → MySQL/SQLite.</p>
 
             <?php if ($msg) : ?>
-                <div class="alert alert-info py-2 small"><?= e($msg) ?></div>
+                <div class="alert alert-info py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
 
             <div class="row g-3">
@@ -126,7 +119,7 @@ $historico = $evo->doAluno((int) $aluno['id']);
                                     <label class="form-label small">Observação</label>
                                     <input type="text" name="observacao" class="form-control" placeholder="Ex: Após 30 dias">
                                 </div>
-                                <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
                                 <button class="btn btn-gym w-100">Salvar evolução</button>
                             </form>
                         </div>
@@ -164,10 +157,10 @@ $historico = $evo->doAluno((int) $aluno['id']);
                                         <?php else : ?>
                                             <?php foreach ($historico as $h) : ?>
                                                 <tr>
-                                                    <td><?= e($h['data']) ?></td>
-                                                    <td><?= e($h['peso']) ?> kg</td>
-                                                    <td><?= e($h['altura']) ?> m</td>
-                                                    <td class="small"><?= e($h['observacao'] ?? '—') ?></td>
+                                                    <td><?= htmlspecialchars((string) $h['data'], ENT_QUOTES, 'UTF-8') ?></td>
+                                                    <td><?= htmlspecialchars((string) $h['peso'], ENT_QUOTES, 'UTF-8') ?> kg</td>
+                                                    <td><?= htmlspecialchars((string) $h['altura'], ENT_QUOTES, 'UTF-8') ?> m</td>
+                                                    <td class="small"><?= htmlspecialchars((string) ($h['observacao'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php endif; ?>
