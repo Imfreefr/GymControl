@@ -54,9 +54,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
 <button type="submit" class="bgLinearGradient rounded-3 w-100 mb-3">Entrar</button>
 <p class="text-center small">Não tem conta? <a href="View/register.php">Cadastre-se</a></p>
-<div class="text-center mt-2 p-2 rounded-3" style="background:#fff7ed;border:1px dashed #fed7aa">
-<small class="text-muted">Demo: <b>admin@gymcontrol.com / Admin123!</b><br><b>aluno@teste.com / Aluno123!</b></small>
-</div>
 </form>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
