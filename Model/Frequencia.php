@@ -1,25 +1,68 @@
 <?php
+
 namespace Model;
-use Model\Connection;
+
 use PDO;
-class Frequencia {
+
+/**
+ * Model de Frequência
+ *
+ * Registra presenças por aluno e data.
+ */
+class Frequencia
+{
     private PDO $db;
-    public function __construct(){ $this->db=Connection::getInstance(); }
-    public function registrar(int $alunoId, string $data, int $presente=1): bool {
-        $st=$this->db->prepare("INSERT INTO frequencias (aluno_id,data,presente) VALUES (:a,:d,:p) ON CONFLICT(aluno_id,data) DO UPDATE SET presente=:p");
-        $st->bindValue(':a',$alunoId,PDO::PARAM_INT); $st->bindValue(':d',$data); $st->bindValue(':p',$presente,PDO::PARAM_INT);
-        return $st->execute();
+
+    public function __construct()
+    {
+        $this->db = Connection::getInstance();
     }
-    public function doAluno(int $alunoId): array {
-        $st=$this->db->prepare("SELECT * FROM frequencias WHERE aluno_id=:a ORDER BY data DESC");
-        $st->bindValue(':a',$alunoId,PDO::PARAM_INT); $st->execute(); return $st->fetchAll();
+
+    /**
+     * Registra ou atualiza presença.
+     */
+    public function registrar(int $alunoId, string $data, int $presente = 1): bool
+    {
+        $sql = "INSERT INTO frequencias (aluno_id, data, presente)
+                VALUES (:a, :d, :p)
+                ON CONFLICT(aluno_id, data) DO UPDATE SET presente = :p";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
+        $stmt->bindValue(':d', $data);
+        $stmt->bindValue(':p', $presente, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
-    public function totalPresencas(int $alunoId): int {
-        $st=$this->db->prepare("SELECT COUNT(*) FROM frequencias WHERE aluno_id=:a AND presente=1");
-        $st->bindValue(':a',$alunoId,PDO::PARAM_INT); $st->execute(); return (int)$st->fetchColumn();
+
+    public function doAluno(int $alunoId): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM frequencias WHERE aluno_id = :a ORDER BY data DESC");
+        $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
-    public function doMes(int $alunoId, string $mes): int {
-        $st=$this->db->prepare("SELECT COUNT(*) FROM frequencias WHERE aluno_id=:a AND presente=1 AND strftime('%Y-%m',data)=:m");
-        $st->bindValue(':a',$alunoId,PDO::PARAM_INT); $st->bindValue(':m',$mes); $st->execute(); return (int)$st->fetchColumn();
+
+    public function totalPresencas(int $alunoId): int
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM frequencias WHERE aluno_id = :a AND presente = 1");
+        $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function doMes(int $alunoId, string $mes): int
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM frequencias
+             WHERE aluno_id = :a AND presente = 1 AND strftime('%Y-%m', data) = :m"
+        );
+        $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
+        $stmt->bindValue(':m', $mes);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 }

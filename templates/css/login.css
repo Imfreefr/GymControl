@@ -1,10 +1,62 @@
+/* ============================================================
+ * GymControl - Login CSS
+ * Estilos específicos da página de login
+ * ============================================================ */
+
 @import url(global.css);
-form{padding:32px;width:420px;max-width:92vw;background:#fff;box-shadow:0 25px 50px -12px rgb(0 0 0 / .25)}
-.form__create-account{margin-bottom:28px}
-.form__create-account figure{width:64px;height:64px;padding:16px}
-.form__create-account h2{font-size:28px}
-.form__create-account p{font-size:15px;color:#6b7280}
-button{color:#fff;border:0;transition:.15s;padding:12px;font-weight:700;border-radius:12px}
-button:hover{transform:scale(1.02);box-shadow:0 10px 15px -3px rgb(0 0 0 / .12)}
-a{color:#ea580c;font-weight:700}
-a:hover{color:#c2410c}
+
+/* ------------------------------------------------------------
+ * Formulário
+ * ------------------------------------------------------------ */
+form {
+    padding: 32px;
+    width: 420px;
+    max-width: 92vw;
+    background: #fff;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);
+}
+
+.form__create-account {
+    margin-bottom: 28px;
+}
+
+.form__create-account figure {
+    width: 64px;
+    height: 64px;
+    padding: 16px;
+}
+
+.form__create-account h2 {
+    font-size: 28px;
+}
+
+.form__create-account p {
+    font-size: 15px;
+    color: #6b7280;
+}
+
+/* ------------------------------------------------------------
+ * Botões e Links
+ * ------------------------------------------------------------ */
+button {
+    color: #fff;
+    border: 0;
+    transition: .15s;
+    padding: 12px;
+    font-weight: 700;
+    border-radius: 12px;
+}
+
+button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / .12);
+}
+
+a {
+    color: #ea580c;
+    font-weight: 700;
+}
+
+a:hover {
+    color: #c2410c;
+}

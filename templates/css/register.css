@@ -1,2 +1,17 @@
+/* ============================================================
+ * GymControl - Register CSS
+ * Estilos específicos da página de cadastro
+ * ============================================================ */
+
 @import url(global.css);
-form{padding:28px;width:440px;max-width:94vw;background:#fff;box-shadow:0 25px 50px -12px rgb(0 0 0 / .25)}
+
+/* ------------------------------------------------------------
+ * Formulário de Cadastro
+ * ------------------------------------------------------------ */
+form {
+    padding: 28px;
+    width: 440px;
+    max-width: 94vw;
+    background: #fff;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);
+}

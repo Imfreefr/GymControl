@@ -1,1 +1,2 @@
--- seed executado via PHP com hash real, manter vazio para compatibilidade
+-- GymControl - Seed
+-- Seed executado via PHP com hash real, manter vazio para compatibilidade

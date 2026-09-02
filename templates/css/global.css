@@ -1,16 +1,125 @@
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000}
-body{height:100vh;font-family:'Inter',system-ui,-apple-system,sans-serif;background:#0f0f0f;color:#1a1a1a}
-.bgLinearGradient{background:linear-gradient(135deg,#ff6b00,#ff2e00)}
-.bgGymDark{background:#111}
-a{text-decoration:none}
-.inputPlaceholder::placeholder{font-size:15px}
-.card-gym{border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid #eee}
-.badge-gym{background:linear-gradient(135deg,#ff6b00,#ff2e00);color:#fff}
-.btn-gym{background:linear-gradient(135deg,#ff6b00,#ff2e00);color:#fff;border:0;font-weight:600;transition:.15s}
-.btn-gym:hover{transform:scale(1.02);box-shadow:0 8px 20px rgba(255,107,0,.35);color:#fff}
-.sidebar{background:#111;color:#fff;min-height:100vh}
-.sidebar a{color:#bbb}
-.sidebar a:hover,.sidebar a.active{color:#fff;background:#1e1e1e;border-radius:10px}
-.navbar-gym{background:#111}
-.stat-card{border-radius:16px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+/* ============================================================
+ * GymControl - Global CSS
+ * Estilos base compartilhados por todas as páginas
+ * ============================================================ */
+
+/* ------------------------------------------------------------
+ * Reset e Variáveis
+ * ------------------------------------------------------------ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    --tw-rotate: 0;
+    --tw-skew-x: 0;
+    --tw-skew-y: 0;
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-shadow-colored: 0 0 #0000;
+}
+
+/* ------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------ */
+body {
+    height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0f0f0f;
+    color: #1a1a1a;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ------------------------------------------------------------
+ * Utilitários de Fundo
+ * ------------------------------------------------------------ */
+.bgLinearGradient {
+    background: linear-gradient(135deg, #ff6b00, #ff2e00);
+}
+
+.bgGymDark {
+    background: #111;
+}
+
+/* ------------------------------------------------------------
+ * Formulário
+ * ------------------------------------------------------------ */
+.inputPlaceholder::placeholder {
+    font-size: 15px;
+}
+
+/* ------------------------------------------------------------
+ * Cards
+ * ------------------------------------------------------------ */
+.card-gym {
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
+    border: 1px solid #eee;
+}
+
+.stat-card {
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+}
+
+/* ------------------------------------------------------------
+ * Badges
+ * ------------------------------------------------------------ */
+.badge-gym {
+    background: linear-gradient(135deg, #ff6b00, #ff2e00);
+    color: #fff;
+}
+
+/* ------------------------------------------------------------
+ * Botões
+ * ------------------------------------------------------------ */
+.btn-gym {
+    background: linear-gradient(135deg, #ff6b00, #ff2e00);
+    color: #fff;
+    border: 0;
+    font-weight: 600;
+    transition: .15s;
+}
+
+.btn-gym:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(255, 107, 0, .35);
+    color: #fff;
+}
+
+/* ------------------------------------------------------------
+ * Sidebar
+ * ------------------------------------------------------------ */
+.sidebar {
+    background: #111;
+    color: #fff;
+    min-height: 100vh;
+}
+
+.sidebar a {
+    color: #bbb;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    color: #fff;
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+
+/* ------------------------------------------------------------
+ * Navbar
+ * ------------------------------------------------------------ */
+.navbar-gym {
+    background: #111;
+}
