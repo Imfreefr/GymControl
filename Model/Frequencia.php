@@ -25,7 +25,7 @@ class Frequencia
     {
         $sql = "INSERT INTO frequencias (aluno_id, data, presente)
                 VALUES (:a, :d, :p)
-                ON CONFLICT(aluno_id, data) DO UPDATE SET presente = :p";
+                ON DUPLICATE KEY UPDATE presente = VALUES(presente)";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
@@ -57,7 +57,7 @@ class Frequencia
     {
         $stmt = $this->db->prepare(
             "SELECT COUNT(*) FROM frequencias
-             WHERE aluno_id = :a AND presente = 1 AND strftime('%Y-%m', data) = :m"
+              WHERE aluno_id = :a AND presente = 1 AND DATE_FORMAT(data, '%Y-%m') = :m"
         );
         $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
         $stmt->bindValue(':m', $mes);
