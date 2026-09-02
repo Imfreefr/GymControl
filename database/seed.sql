@@ -1,0 +1,1 @@
+-- seed executado via PHP com hash real, manter vazio para compatibilidade
