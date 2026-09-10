@@ -47,7 +47,10 @@ class Exercicio
             return $stmt->fetchAll();
         }
 
-        return $this->db->query("SELECT * FROM exercicios ORDER BY id DESC")->fetchAll();
+        $stmt = $this->db->prepare("SELECT * FROM exercicios ORDER BY id DESC");
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function porId(int $id): array|bool
@@ -61,7 +64,10 @@ class Exercicio
 
     public function total(): int
     {
-        return (int) $this->db->query("SELECT COUNT(*) FROM exercicios")->fetchColumn();
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM exercicios");
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 
     public function excluir(int $id): bool

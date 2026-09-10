@@ -67,13 +67,16 @@ class Treino
 
     public function todos(): array
     {
-        return $this->db->query(
+        $stmt = $this->db->prepare(
             "SELECT t.*, u.nome AS aluno_nome
              FROM treinos t
              JOIN alunos a ON a.id = t.aluno_id
              JOIN users u ON u.id = a.user_id
              ORDER BY t.id DESC"
-        )->fetchAll();
+        );
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function porId(int $id): array|bool
@@ -107,7 +110,10 @@ class Treino
 
     public function total(): int
     {
-        return (int) $this->db->query("SELECT COUNT(*) FROM treinos")->fetchColumn();
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM treinos");
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 
     public function excluir(int $id): bool

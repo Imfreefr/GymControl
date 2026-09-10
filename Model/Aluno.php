@@ -84,9 +84,10 @@ class Aluno
             return $stmt->fetchAll();
         }
 
-        return $this->db
-            ->query("SELECT a.*, u.nome, u.email FROM alunos a JOIN users u ON u.id = a.user_id ORDER BY a.id DESC")
-            ->fetchAll();
+        $stmt = $this->db->prepare("SELECT a.*, u.nome, u.email FROM alunos a JOIN users u ON u.id = a.user_id ORDER BY a.id DESC");
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function atualizar(int $id, array $dados): bool
@@ -137,6 +138,9 @@ class Aluno
 
     public function total(): int
     {
-        return (int) $this->db->query("SELECT COUNT(*) FROM alunos")->fetchColumn();
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM alunos");
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 }

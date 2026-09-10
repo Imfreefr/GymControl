@@ -12,7 +12,18 @@ require_once '../vendor/autoload.php';
 use Controller\AlunoController;
 use Controller\TreinoController;
 
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
 
 $alunoCtrl  = new AlunoController();
 $treinoCtrl = new TreinoController();
@@ -53,7 +64,10 @@ $meusTreinos = $treinoCtrl->doAluno((int) $aluno['id']);
             </div>
             <div class="d-flex gap-2">
                 <a href="painel_aluno.php" class="btn btn-sm btn-outline-light">Painel</a>
-                <a href="logout.php" class="btn btn-sm bgLinearGradient text-white">Sair</a>
+                <form method="POST" action="logout.php" class="d-inline m-0">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
+                    <button class="btn btn-sm bgLinearGradient text-white">Sair</button>
+                </form>
             </div>
         </nav>
     </header>

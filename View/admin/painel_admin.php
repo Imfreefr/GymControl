@@ -12,7 +12,23 @@
 require_once '../../vendor/autoload.php';
 
 // Autenticação
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
+
+if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') {
+    header('Location: ../View/painel_aluno.php');
+    exit;
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
 
 use Model\Aluno;
 use Model\Connection;
@@ -29,14 +45,16 @@ $totalEx = $exM->total();
 $totalTr = $trM->total();
 
 $pdo = Connection::getInstance();
-$presRecentes = $pdo->query(
+$stmt = $pdo->prepare(
     "SELECT f.data, u.nome
      FROM frequencias f
      JOIN alunos a ON a.id = f.aluno_id
      JOIN users u ON u.id = a.user_id
      ORDER BY f.data DESC
      LIMIT 5"
-)->fetchAll();
+);
+$stmt->execute();
+$presRecentes = $stmt->fetchAll();
 
 ?>
 <!DOCTYPE html>
@@ -76,9 +94,12 @@ $presRecentes = $pdo->query(
                     <a href="frequencia_admin.php" class="p-2 text-decoration-none">
                         <i class="bi bi-calendar-check"></i> Frequência
                     </a>
-                    <a href="../logout.php" class="p-2 text-decoration-none text-danger">
-                        <i class="bi bi-box-arrow-right"></i> Sair
-                    </a>
+                    <form method="POST" action="../logout.php" class="m-0 p-2">
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
+                        <button class="btn btn-link p-0 text-decoration-none text-danger">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </button>
+                    </form>
                 </nav>
                 <div class="mt-4 small opacity-75">
                     <?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?><br>

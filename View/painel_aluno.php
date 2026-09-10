@@ -14,8 +14,18 @@ use Model\Evolucao;
 use Model\Frequencia;
 use Model\Treino;
 
-// Autenticação e autorização
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     header('Location: admin/painel_admin.php');
@@ -72,7 +82,10 @@ $proximoTreino = $meusTreinos[0] ?? null;
                 <a href="meu_treino.php" class="btn btn-sm btn-outline-light">Meu Treino</a>
                 <a href="frequencia.php" class="btn btn-sm btn-outline-light">Frequência</a>
                 <a href="evolucao.php" class="btn btn-sm btn-outline-light">Evolução</a>
-                <a href="logout.php" class="btn btn-sm bgLinearGradient text-white">Sair</a>
+                <form method="POST" action="logout.php" class="d-inline m-0">
+                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
+                    <button class="btn btn-sm bgLinearGradient text-white">Sair</button>
+                </form>
             </div>
         </nav>
     </header>

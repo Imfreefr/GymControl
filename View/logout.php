@@ -1,32 +1,39 @@
 <?php
-if (session_status()===PHP_SESSION_NONE) session_start();
 
 /**
  * GymControl - Logout
  *
- * Encerra a sessão do utilizador de forma segura: limpa o array
- * de sessão, remove o cookie de sessão quando aplicável, destrói
- * a sessão no servidor e redireciona para a página inicial.
+ * Encerra a sessão do utilizador de forma segura.
  */
 
-// Autenticação
-require_once '../vendor/autoload.php';
-
-// Processamento - Encerramento de Sessão
-
-// Limpa todos os dados da sessão atual.
-$_SESSION = [];
-
-// Remove o cookie de sessão, se cookies estiverem habilitados.
-if (ini_get('session.use_cookies')) {
-    $p = session_get_cookie_params();
-
-    setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Destrói a sessão no servidor.
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+require_once '../vendor/autoload.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    die('Método não permitido. Use POST.');
+}
+
+if (!isset($_SESSION['csrf'], $_POST['csrf']) || !hash_equals($_SESSION['csrf'], (string) $_POST['csrf'])) {
+    http_response_code(403);
+    die('Token CSRF inválido.');
+}
+
+$_SESSION = [];
+
+if (ini_get('session.use_cookies')) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+}
+
 session_destroy();
 
-// Redireciona para a página inicial com mensagem de logout.
 header('Location: ../index.php?msg=logout');
 exit;

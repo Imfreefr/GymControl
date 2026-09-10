@@ -15,19 +15,26 @@ require_once '../vendor/autoload.php';
 use Controller\AlunoController;
 use Model\Frequencia;
 
-// ============================================================
 // Autenticação e Autorização
-// ============================================================
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
 
 if (($_SESSION['usuario_tipo'] ?? '') === 'admin') {
     header('Location: admin/painel_admin.php');
     exit;
 }
 
-// ============================================================
 // Dados
-// ============================================================
 $alunoCtrl = new AlunoController();
 $freq = new Frequencia();
 
@@ -63,9 +70,12 @@ $mes = $freq->doMes((int) $aluno['id'], date('Y-m'));
                     </span>
                     <strong>GymControl</strong>
                 </a>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
                     <a href="painel_aluno.php" class="btn btn-sm btn-outline-light">Painel</a>
-                    <a href="logout.php" class="btn btn-sm bgLinearGradient text-white">Sair</a>
+                    <form method="POST" action="logout.php" class="d-inline m-0">
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>">
+                        <button class="btn btn-sm bgLinearGradient text-white">Sair</button>
+                    </form>
                 </div>
             </nav>
         </header>

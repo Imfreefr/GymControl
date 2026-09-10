@@ -1,5 +1,11 @@
 <?php
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
 
 /**
  * GymControl - Listagem de Alunos (Admin)
@@ -13,7 +19,19 @@ if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['c
 require_once '../../vendor/autoload.php';
 
 // Autenticação
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
+
+if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') {
+    header('Location: ../View/painel_aluno.php');
+    exit;
+}
 
 use Controller\AlunoController;
 
@@ -59,9 +77,7 @@ $msg = $_GET['msg'] ?? '';
                     <a href="treinos.php" class="p-2 text-decoration-none">
                         <i class="bi bi-clipboard-check"></i> Treinos
                     </a>
-                    <a href="../logout.php" class="p-2 text-decoration-none text-danger">
-                        <i class="bi bi-box-arrow-right"></i> Sair
-                    </a>
+                    <form method="POST" action="../logout.php" class="m-0 p-2"><input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>"><button class="btn btn-link p-0 text-decoration-none text-danger"><i class="bi bi-box-arrow-right"></i> Sair</button></form>
                 </nav>
             </aside>
 
@@ -120,7 +136,7 @@ $msg = $_GET['msg'] ?? '';
                                                 </td>
                                                 <td class="d-flex gap-1">
                                                     <a href="aluno_editar.php?id=<?= (int) $a['id'] ?>" class="btn btn-sm btn-outline-dark">Editar</a>
-                                                    <a href="aluno_excluir.php?id=<?= (int) $a['id'] ?>&csrf=<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir aluno?')">Excluir</a>
+                                                    <form method="POST" action="aluno_excluir.php" class="d-inline m-0" onsubmit="return confirm('Excluir aluno?')"><input type="hidden" name="id" value="<?= (int) $a['id'] ?>"><input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>"><button class="btn btn-sm btn-outline-danger">Excluir</button></form>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

@@ -1,27 +1,44 @@
 <?php
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 
 /**
- * GymControl - Excluir Exercício (Admin)
+ * GymControl - Excluir Exercicio (Admin)
  *
- * Remove um exercício pelo ID informado via GET. Valida o token
- * CSRF e delega a exclusão ao ExercicioController via Model/PDO.
- *
- * Fluxo: Autenticação admin -> GET id + CSRF -> Controller excluir -> Redirect
+ * Remove um exercicio pelo id informado via POST.
  */
 
-require_once '../../vendor/autoload.php';
-// Autenticação
-if (session_status()===PHP_SESSION_NONE) session_start(); if (empty($_SESSION['usuario_id'])) { header('Location: ../index.php?msg=login'); exit; } if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') { header('Location: ../View/painel_aluno.php'); exit; }
-
-if (!(isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], (string) ($_GET['csrf'] ?? null)))) {
-    die('Token inválido.');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Processamento
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+require_once '../../vendor/autoload.php';
+
+if (empty($_SESSION['usuario_id'])) {
+    header('Location: ../index.php?msg=login');
+    exit;
+}
+
+if (($_SESSION['usuario_tipo'] ?? '') !== 'admin') {
+    header('Location: ../View/painel_aluno.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    die('Método não permitido. Use POST.');
+}
+
+if (!isset($_SESSION['csrf'], $_POST['csrf']) || !hash_equals($_SESSION['csrf'], (string) $_POST['csrf'])) {
+    http_response_code(403);
+    die('Token CSRF inválido.');
+}
+
 use Controller\ExercicioController;
 
-(new ExercicioController())->excluir((int) ($_GET['id'] ?? 0));
+(new ExercicioController())->excluir((int) ($_POST['id'] ?? 0));
 
 header('Location: exercicios.php');
 exit;
