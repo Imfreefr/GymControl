@@ -170,17 +170,7 @@ $presRecentes = $stmt->fetchAll();
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card card-gym border-0">
-                            <div class="card-body">
-                                <h5 class="fw-bold">Atalhos</h5>
-                                <p class="small text-muted">
-                                    Cadastro via <b>POST</b> → Controller → Validação → Model → PDO → MySQL/SQLite → Redirect.<br>
-                                    Listagem via <b>GET</b> → Controller → Model → PDO → View.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </main>
         </div>
