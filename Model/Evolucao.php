@@ -49,7 +49,8 @@ class Evolucao
         $stmt = $this->db->prepare("DELETE FROM evolucoes WHERE id = :id AND aluno_id = :a");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
+        $stmt->execute();
 
-        return $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
 }

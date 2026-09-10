@@ -2,6 +2,7 @@
 node_modules/
 .env
 database/database.sqlite
+tests/test.sqlite
 storage/uploads/images/*
 !storage/uploads/images/.gitkeep
 .DS_Store

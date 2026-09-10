@@ -23,10 +23,16 @@ class Frequencia
      */
     public function registrar(int $alunoId, string $data, int $presente = 1): bool
     {
-        $sql = "INSERT INTO frequencias (aluno_id, data, presente)
-                VALUES (:a, :d, :p)
-                ON DUPLICATE KEY UPDATE presente = VALUES(presente)";
-
+        $driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if ($driver === 'sqlite') {
+            $sql = "INSERT INTO frequencias (aluno_id, data, presente)
+                    VALUES (:a, :d, :p)
+                    ON CONFLICT(aluno_id, data) DO UPDATE SET presente = excluded.presente";
+        } else {
+            $sql = "INSERT INTO frequencias (aluno_id, data, presente)
+                    VALUES (:a, :d, :p)
+                    ON DUPLICATE KEY UPDATE presente = VALUES(presente)";
+        }
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
         $stmt->bindValue(':d', $data);
@@ -55,10 +61,11 @@ class Frequencia
 
     public function doMes(int $alunoId, string $mes): int
     {
-        $stmt = $this->db->prepare(
-            "SELECT COUNT(*) FROM frequencias
-              WHERE aluno_id = :a AND presente = 1 AND DATE_FORMAT(data, '%Y-%m') = :m"
-        );
+        $driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $sql = $driver === 'sqlite'
+            ? "SELECT COUNT(*) FROM frequencias WHERE aluno_id = :a AND presente = 1 AND strftime('%Y-%m', data) = :m"
+            : "SELECT COUNT(*) FROM frequencias WHERE aluno_id = :a AND presente = 1 AND DATE_FORMAT(data, '%Y-%m') = :m";
+        $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':a', $alunoId, PDO::PARAM_INT);
         $stmt->bindValue(':m', $mes);
         $stmt->execute();
