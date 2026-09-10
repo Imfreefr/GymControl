@@ -38,7 +38,7 @@ Sistema de gestão de academia: cadastro e controle de alunos, treinos, exercíc
 
 - **MVC** + **POO** + **PDO** (prepared statements)
 - Estrutura: `Config/`, `Controller/`, `Model/`, `View/`, `templates/`, `database/`, `storage/`
-- Suporte a **SQLite** (padrão, sem configurar MySQL) e **MySQL**
+- Conexão via **MySQL** (a `Model/Connection.php` monta o DSN diretamente para MySQL; não há suporte a SQLite implementado no código, apesar de versões anteriores do README mencionarem isso)
 
 > **Nota sobre o Laravel Herd:** o Herd é utilizado apenas como ambiente/servidor local para rodar PHP, não há dependência do framework Laravel no `composer.json`. O projeto é PHP puro estruturado em MVC.
 
@@ -53,21 +53,21 @@ PHP 8.3+, PDO, SQLite/MySQL, Bootstrap 5, Chart.js, Toastify
 
 ## Instalação
 
-### Opção 1 — SQLite (recomendado para teste rápido)
+O sistema conecta sempre via **MySQL**. Por padrão (sem `.env`), ele tenta se conectar em `localhost:3306`, banco `academia`, usuário `root`, sem senha — configuração comum em ambientes locais como XAMPP ou o MySQL embutido do Laravel Herd.
+
+1. Certifique-se de ter um servidor MySQL local ativo (o Herd oferece isso)
+2. Crie o banco `academia` (ou o nome que preferir)
+3. Importe `database/schema.sql`
+4. Rode:
 
 ```
 composer install
 php -S localhost:8000
-# Abra http://localhost:8000 — o banco é criado automaticamente
 ```
 
-### Opção 2 — MySQL
+5. Caso seus dados de conexão sejam diferentes do padrão (host, porta, nome do banco, usuário ou senha), copie `.env.example` para `.env` e ajuste as variáveis — mas note que isso só terá efeito se as variáveis forem exportadas no ambiente/servidor, já que o projeto não usa uma biblioteca de dotenv (o PHP lê via `getenv()`).
 
-1. Crie o banco `gymcontrol`
-2. Configure `.env` (copie de `.env.example`) ou defina as variáveis `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
-3. Importe `database/schema.sql`
-
-> O `.env` só é necessário caso opte pela Opção 2 (MySQL). Rodando com SQLite (padrão), nenhuma configuração adicional é exigida.
+> **Valores padrão do sistema** (definidos em `Config/configuration.php`): `DB_NAME=academia`, `DB_USER=root`, `DB_PASSWORD` vazio, `DB_HOST=localhost`, `DB_PORT=3306`.
 
 ## Acesso demo
 
