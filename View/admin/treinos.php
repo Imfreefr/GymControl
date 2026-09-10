@@ -66,7 +66,7 @@ $lista = $ctrl->todos();
                     <a href="alunos.php" class="p-2 text-decoration-none">Alunos</a>
                     <a href="exercicios.php" class="p-2 text-decoration-none">Exercícios</a>
                     <a href="treinos.php" class="active p-2 text-decoration-none">Treinos</a>
-                    <form method="POST" action="../logout.php" class="m-0 p-2">Sair</a>
+                    <form method="POST" action="../logout.php" class="m-0 p-2"><input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8') ?>"><button class="btn btn-link p-0 text-decoration-none text-danger">Sair</button></form>
                 </nav>
             </aside>
 
