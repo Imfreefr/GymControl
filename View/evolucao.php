@@ -90,7 +90,7 @@ $historico = $evo->doAluno((int) $aluno['id']);
         <!-- Conteúdo -->
         <main class="container py-4">
             <h3 class="fw-bold">Minha Evolução</h3>
-            <p class="text-muted small">Registre peso/altura. POST → Controller → Model → PDO → MySQL/SQLite.</p>
+            <p class="text-muted small">Registre peso/altura.</p>
 
             <?php if ($msg) : ?>
                 <div class="alert alert-info py-2 small"><?= htmlspecialchars((string) $msg, ENT_QUOTES, 'UTF-8') ?></div>
